@@ -1,12 +1,12 @@
-name:                hello
+name:                gameonhaskell
 version:             0.1.0.0
 synopsis:            Simple project template from stack
 description:         Please see README.md
-homepage:            https://github.com/bitemyapp/hello#readme
+homepage:            https://github.com/horhik/gameonhaskell
 license:             BSD3
 license-file:        LICENSE
-author:              Your Name Here
-maintainer:          example@email.com
+author:              Horhik
+maintainer:          horhik@tuta.io
 copyright:           2016, Your Name Here
 category:            Web
 build-type:          Simple

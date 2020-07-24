@@ -60,16 +60,28 @@ fromMaybe Nothing = Circle 30
 imagePath :: String -> String
 imagePath img = "/home/horhik/Pictures/Fun/" ++ img
 
+-- | trueTranslate prevent translate function from creating recursive type Picture
+-- | instead (Translate Float Float (Translate Float Floaat ... (Translate Float Float Picture))
+-- | we'll get just (Translate Float Float Pictures) by compounding all Floats into one
+trueTranslate :: Float -> Float -> Picture ->  Picture
+trueTranslate newX newY (Translate x y sprite) = Translate (x + newX) (y + newY) sprite
+trueTranslate x y picture = translate x y picture
 
 movePlayer :: Float -> Float -> Player -> Player
 movePlayer x y (Player sprite oldX oldY) = Player movedPicture newX newY
   where
     newX = x + oldX
     newY = y + oldY
-    movedPicture = translate x y sprite
+    movedPicture = trueTranslate x y sprite
 
 wtf :: Float -> World -> World
-wtf iterations world = world
+wtf _ world = world
+wtf 0.5 (World p [(House sprite x y)] g) = World p [(House (trueTranslate hx hy sprite) newX newY )] g
+  where
+    hx = 10
+    hy = 0
+    newX = hx + x
+    newY = hy + y
 
 newWorld = World defaultPenguin houses ground
 

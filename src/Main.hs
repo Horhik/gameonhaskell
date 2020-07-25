@@ -58,7 +58,7 @@ fromMaybe (Just a) = a
 fromMaybe Nothing = Circle 30
 
 imagePath :: String -> String
-imagePath img = "/home/horhik/Pictures/Fun/" ++ img
+imagePath img = "sprites/" ++ img
 
 -- | trueTranslate prevent translate function from creating recursive type Picture
 -- | instead (Translate Float Float (Translate Float Floaat ... (Translate Float Float Picture))
@@ -74,33 +74,36 @@ movePlayer x y (Player sprite oldX oldY) = Player movedPicture newX newY
     newY = y + oldY
     movedPicture = trueTranslate x y sprite
 
-wtf :: Float -> World -> World
-wtf _ world = world
-wtf 0.5 (World p [(House sprite x y)] g) = World p [(House (trueTranslate hx hy sprite) newX newY )] g
+eachTickEvent :: Float -> World -> World
+eachTickEvent _ (World p [(House sprite x y)] g) = World p [(House (trueTranslate hx hy sprite) newX newY )] g
   where
     hx = 10
     hy = 0
     newX = hx + x
     newY = hy + y
+eachTickEvent _ w = w
 
+newWorld :: World
 newWorld = World defaultPenguin houses ground
 
 -- packPictures :: Picture -> Picture -> Picture
 -- packPictures pictures = Pictures pictures
 
+getHousePictures :: House -> Picture
 getHousePictures (House img _ _ ) = img
 
 world2picture :: World -> Picture
 world2picture (World (Player img1 _ _) imgs _ ) = Pictures $ img1 : (map getHousePictures imgs)
 
 eventHandler :: Event -> World -> World
-eventHandler (EventKey (SpecialKey KeyRight) _ _ _) (World player objs gr) = World (movePlayer 20 0 player) objs gr
-eventHandler (EventKey (SpecialKey KeyLeft) _ _ _) (World player objs gr) = World (movePlayer (-20) 0 player) objs gr
-eventHandler (EventKey (SpecialKey KeyUp) _ _ _) (World player objs gr) = World (movePlayer 0 20 player) objs gr
-eventHandler (EventKey (SpecialKey KeyDown) _ _ _) (World player objs gr) = World (movePlayer 0 (-20) player) objs gr
+eventHandler (EventKey (SpecialKey KeyRight) Down _ _) (World player objs gr) = World (movePlayer 20 0 player) objs gr
+eventHandler (EventKey (SpecialKey KeyLeft) Down _ _) (World player objs gr) = World (movePlayer (-20) 0 player) objs gr
+eventHandler (EventKey (SpecialKey KeyUp) Down _ _) (World player objs gr) = World (movePlayer 0 20 player) objs gr
+eventHandler (EventKey (SpecialKey KeyDown) Down _ _) (World player objs gr) = World (movePlayer 0 (-20) player) objs gr
 eventHandler _ w = w
 
-game world  = play FullScreen cyan 20 world world2picture eventHandler wtf
+game :: World -> IO ()
+game world  = play FullScreen cyan 20 world world2picture eventHandler eachTickEvent
 
 main :: IO ()
 main = game newWorld
